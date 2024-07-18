@@ -1,0 +1,14 @@
+HARDWARE IMPLEMENTATION
+Components Used- 
+ Arduino UNO
+ Ultrasonic sensor
+ Bluetooth module HC05
+ Buzzer
+ LCD
+ Bread board
+ Jumper Wires
+
+SOFTWARE IMPLEMENTATION
+Software Used- 
+ Arduino IDE
+ Serial Bluetooth Terminal app
