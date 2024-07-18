@@ -1,0 +1,77 @@
+#include <SoftwareSerial.h>
+const int trigPin = 10;
+const int echoPin = 11;
+const int trigPin1 = 8;
+const int echoPin1 = 9;
+const int trigPin2 = 3;
+const int echoPin2 = 4;
+const int BUZZER_PIN = A0;
+int msec_cnt=0,SEC=0,WIFI_SEC;
+float duration,distance;
+float MID_duration,MID_distance;
+float TRD_duration,TRD_distance;
+boolean S_flag=0,TOGGLE_FLG=0,ONCE_FLG1,SEND_FLG;
+int MID_DIST=0,TRD_DIST=0;
+boolean LCD_CLR=0,ONCE_FLG=0;
+int CNT=0;
+int SER_CNT=0,FST_DIST;
+void setup(){
+pinMode(13, OUTPUT);
+pinMode(trigPin, OUTPUT);
+pinMode(echoPin, INPUT);
+pinMode(trigPin1, OUTPUT);
+pinMode(echoPin1, INPUT);
+pinMode(trigPin2, OUTPUT);
+pinMode(echoPin2, INPUT);
+pinMode(BUZZER_PIN, OUTPUT);
+Serial.begin(9600);
+delay(1000);
+}void loop(){
+READ_FIRST_SENSOR();
+READ_MID_SENSOR();
+READ_THIRD_SENSOR();
+timerIsr();
+if(SEND_FLG)
+{ Serial.print("US1:"); Serial.print(FST_DIST); Serial.print(" US2:"); Serial.print(MID_DIST);
+Serial.print(" US3:"); Serial.println(TRD_DIST);
+SEND_FLG=0; }
+}void READ_FIRST_SENSOR(void){
+digitalWrite(trigPin, LOW);
+delayMicroseconds(2);
+digitalWrite(trigPin, HIGH);
+delayMicroseconds(10);
+digitalWrite(trigPin, LOW);
+duration = pulseIn(echoPin, HIGH);
+distance = (duration*.0343)/2;
+FST_DIST=int(distance);
+delay(30); }
+void READ_MID_SENSOR(void){
+digitalWrite(trigPin1, LOW);
+delayMicroseconds(2);
+digitalWrite(trigPin1, HIGH);
+delayMicroseconds(10);
+digitalWrite(trigPin1, LOW);
+MID_duration = pulseIn(echoPin1, HIGH);
+MID_distance = (MID_duration*.0343)/2;
+MID_DIST=int(MID_distance);
+delay(30); }
+void READ_THIRD_SENSOR(void){
+digitalWrite(trigPin2, LOW);
+delayMicroseconds(2);
+digitalWrite(trigPin2, HIGH);
+delayMicroseconds(10);
+digitalWrite(trigPin2, LOW);
+TRD_duration = pulseIn(echoPin2, HIGH);
+TRD_distance = (TRD_duration*.0343)/2;
+TRD_DIST=int(TRD_distance)
+delay(30); }
+void timerIsr()
+{ msec_cnt++; if(msec_cnt>=4){ TOGGLE_FLG=!TOGGLE_FLG; CNT++;
+if(CNT>=3){ LCD_CLR=1; CNT=0; }
+SEND_FLG=1;
+SEC++;if(SEC>=4){ SEC=0; }
+msec_cnt=0; }
+if((FST_DIST<40)||(MID_DIST<40)||(TRD_DIST<40)){
+digitalWrite(BUZZER_PIN, TOGGLE_FLG); digitalWrite(13, TOGGLE_FLG);
+}else{
+digitalWrite(BUZZER_PIN, LOW);digitalWrite(13, LOW);}}
